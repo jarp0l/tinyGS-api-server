@@ -9,8 +9,9 @@ packages = [{include = "app"}]
 [tool.poetry.dependencies]
 python = "^3.11"
 uvicorn = {extras = ["standard"], version = "^0.20.0"}
-fastapi-users = {extras = ["beanie"], version = "^10.3.0"}
 python-decouple = "^3.7"
+fastapi-users = {git = "git@github.com:jarp0l/fastapi-users.git"}
+fastapi-users-db-beanie = ">=1.0.0"
 
 
 [build-system]
