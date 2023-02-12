@@ -18,7 +18,7 @@ DATABASE_URL = f"mongodb://{DB_HOST}:{DB_PORT}" if CURRENT_ENV == "dev" else f"m
 client = motor.motor_asyncio.AsyncIOMotorClient(
     DATABASE_URL, uuidRepresentation="standard"
 )
-tinygs_db = client[DB_NAME]
+db = client[DB_NAME]
 
 
 class User(BeanieBaseUser[PydanticObjectId]):
