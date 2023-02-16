@@ -1,5 +1,5 @@
 [tool.poetry]
-name = "tinygs-api-server-new"
+name = "tinygs-api-server"
 version = "0.1.0"
 description = ""
 authors = ["jarp0l <jarp0l@duck.com>"]
