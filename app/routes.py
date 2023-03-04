@@ -1,9 +1,10 @@
 from beanie import init_beanie
 from fastapi import Depends, FastAPI
 
-from db import db, User
-from users import current_active_user
-from routers import auth, user
+from app.db import db_name, User
+from app.routers import auth, user
+from app.users import current_active_user
+
 
 app = FastAPI()
 
@@ -24,7 +25,7 @@ async def authenticated_route(user: User = Depends(current_active_user)):
 @app.on_event("startup")
 async def on_startup():
     await init_beanie(
-        database=db,
+        database=db_name,
         document_models=[
             User,
         ],
