@@ -1,6 +1,8 @@
 import httpx
 from string import Template
 
+from pydantic import EmailStr
+
 from app.schemas import EmailSchema
 from app.utils.config import CONFIG
 
@@ -16,7 +18,11 @@ API_PW_RESET_PATH = CONFIG.api_pw_reset_path
 verification_email_subject = "Confirm Your Account"
 verification_email_body = Template(
     """
+    <b>Welcome to TinyGS!</b
+    <br/>
+    <br/>
     Please confirm your account by <a href="${base_url}${verify_path}?token=${token}">clicking here</a>.
+    <br/>
     <br/>
     <i>If you didn't create an account, you can ignore this.</i>
     """
@@ -28,9 +34,9 @@ verification_email_body = Template(
 # )
 
 
-async def send_verification_email(api_base_url: str, token: str, user_email: str):
+async def send_verification_email(api_base_url: str, token: str, user_email: EmailStr):
     email = EmailSchema(
-        sender=f"TinyGS Team <{MAIL_SENDER}>",
+        sender=MAIL_SENDER,
         recipient=user_email,
         subject=verification_email_subject,
         body=verification_email_body.safe_substitute(
