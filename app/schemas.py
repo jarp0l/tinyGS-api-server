@@ -1,3 +1,4 @@
+from pydantic import BaseModel, EmailStr
 from beanie import PydanticObjectId
 from fastapi_users import schemas
 
@@ -12,3 +13,14 @@ class UserCreate(schemas.BaseUserCreate):
 
 class UserUpdate(schemas.BaseUserUpdate):
     pass
+
+
+class EmailSchema(BaseModel):
+    sender: EmailStr
+    recipient: EmailStr
+    subject: str
+    body: str
+
+
+class VerifyResponseSchema(BaseModel):
+    detail: str

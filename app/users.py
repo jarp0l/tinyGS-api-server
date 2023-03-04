@@ -1,8 +1,8 @@
-from typing import Optional
+from typing import Optional, Union
 
 from beanie import PydanticObjectId
 from fastapi import Depends, Request
-from fastapi_users import BaseUserManager, FastAPIUsers
+from fastapi_users import BaseUserManager, FastAPIUsers, InvalidPasswordException
 from fastapi_users.authentication import (
     AuthenticationBackend,
     BearerTransport,
@@ -10,15 +10,30 @@ from fastapi_users.authentication import (
 )
 from fastapi_users.db import BeanieUserDatabase, ObjectIDIDMixin
 
-from db import User, get_user_db
-from config_manager import get_config
+from app.db import User, get_user_db
+from app.schemas import UserCreate
+from app.utils.config import CONFIG
+from app.utils.email import send_verification_email
 
-SECRET = get_config("JWT_SECRET")
+
+SECRET = CONFIG.jwt_secret
 
 
 class UserManager(ObjectIDIDMixin, BaseUserManager[User, PydanticObjectId]):
     reset_password_token_secret = SECRET
     verification_token_secret = SECRET
+
+    async def validate_password(
+        self,
+        password: str,
+        user: Union[UserCreate, User],
+    ) -> None:
+        if (len(password) < 8) or (len(password) > 72):
+            raise InvalidPasswordException(
+                reason="Password should be between 8 and 72 characters"
+            )
+        if user.email in password:
+            raise InvalidPasswordException(reason="Password should not contain email")
 
     async def on_after_register(self, user: User, request: Optional[Request] = None):
         print(f"User {user.id} has registered.")
@@ -31,7 +46,17 @@ class UserManager(ObjectIDIDMixin, BaseUserManager[User, PydanticObjectId]):
     async def on_after_request_verify(
         self, user: User, token: str, request: Optional[Request] = None
     ):
-        print(f"Verification requested for user {user.id}. Verification token: {token}")
+        print(f"Verification requested for user: {user.id}.")
+        try:
+            res = await send_verification_email(
+                str(request.base_url), token, user.email
+            )
+            if res.status_code == 200:
+                print("Successfully sent!")
+            else:
+                print(f"Error sending email! Status code: {res.status_code}")
+        except Exception as e:
+            print(f"Error:\n{e}")
 
 
 async def get_user_manager(user_db: BeanieUserDatabase = Depends(get_user_db)):
