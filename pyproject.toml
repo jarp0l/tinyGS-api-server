@@ -10,8 +10,10 @@ packages = [{include = "app"}]
 python = "^3.11"
 uvicorn = {extras = ["standard"], version = "^0.20.0"}
 python-decouple = "^3.7"
-fastapi-users = {git = "git@github.com:jarp0l/fastapi-users.git"}
 fastapi-users-db-beanie = ">=1.0.0"
+httpx = "^0.23.3"
+requests = "^2.28.2"
+fastapi-users = "^10.4.0"
 
 
 [build-system]
