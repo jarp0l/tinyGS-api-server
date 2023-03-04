@@ -1,0 +1,11 @@
+version: '3'
+services:
+  tinygs-api-db:
+    image: mongo:5
+    restart: unless-stopped
+    ports:
+      - 27017:27017
+    volumes:
+      - tinygs-api-db-data:/data/db
+volumes:
+  tinygs-api-db-data:
