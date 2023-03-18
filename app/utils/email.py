@@ -13,6 +13,7 @@ MAIL_DOMAIN = CONFIG.mail_domain
 MAIL_SENDER = CONFIG.mail_sender
 API_VERIFCATION_PATH = CONFIG.api_verifcation_path
 API_PW_RESET_PATH = CONFIG.api_pw_reset_path
+TOKEN_VERIFY_URL = CONFIG.api_token_verify_url
 
 
 verification_email_subject = "Confirm Your Account"
@@ -34,13 +35,13 @@ verification_email_body = Template(
 # )
 
 
-async def send_verification_email(api_base_url: str, token: str, user_email: EmailStr):
+async def send_verification_email(token: str, user_email: EmailStr):
     email = EmailSchema(
         sender=MAIL_SENDER,
         recipient=user_email,
         subject=verification_email_subject,
         body=verification_email_body.safe_substitute(
-            base_url=api_base_url, verify_path=API_VERIFCATION_PATH, token=token
+            base_url=TOKEN_VERIFY_URL, verify_path=API_VERIFCATION_PATH, token=token
         ),
     )
 

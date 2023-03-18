@@ -20,19 +20,19 @@ from app.utils.email import send_verification_email
 
 
 SECRET = CONFIG.jwt_secret
-TOKEN_REQUEST_URL = CONFIG.api_token_request_url
+# TOKEN_REQUEST_URL = CONFIG.api_token_request_url
 
 
-async def request_verification_token(user_email: EmailStr):
-    try:
-        async with httpx.AsyncClient() as client:
-            response = await client.post(TOKEN_REQUEST_URL, json={"email": user_email})
-            if response.status_code == 202:
-                print("Sent verification token to user's email.")
-            else:
-                raise Exception
-    except Exception as e:
-        print(f"Error:\n{e}")
+# async def request_verification_token(user_email: EmailStr):
+#     try:
+#         async with httpx.AsyncClient() as client:
+#             response = await client.post(TOKEN_REQUEST_URL, json={"email": user_email})
+#             if response.status_code == 202:
+#                 print("Sent verification token to user's email.")
+#             else:
+#                 raise Exception
+#     except Exception as e:
+#         print(f"Error:\n{e}")
 
 
 class UserManager(ObjectIDIDMixin, BaseUserManager[User, PydanticObjectId]):
@@ -53,7 +53,7 @@ class UserManager(ObjectIDIDMixin, BaseUserManager[User, PydanticObjectId]):
 
     async def on_after_register(self, user: User, request: Optional[Request] = None):
         print(f"User {user.id} has registered.")
-        await request_verification_token(user.email)
+        # await request_verification_token(user.email)
 
     async def on_after_forgot_password(
         self, user: User, token: str, request: Optional[Request] = None
