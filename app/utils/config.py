@@ -8,9 +8,10 @@ class Settings(BaseModel):
     # This API server
     server_port = config("SERVER_PORT", default=8081, cast=int)
     client_port = config("CLIENT_PORT", default=3000, cast=int)
+    client_base_url = config("CLIENT_BASE_URL", default=f"http://localhost:{client_port}")
     api_verifcation_path = "auth/verify"
     api_pw_reset_path = "auth/reset-password"
-    api_token_verify_url = f"http://localhost:{client_port}/auth/verify"
+    api_token_verify_url = f"{client_base_url}/auth/verify"
 
     # Mongo Engine settings
     mongo_uri = config("MONGO_URI", default="mongodb://localhost:27017")
