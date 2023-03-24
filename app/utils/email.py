@@ -1,6 +1,5 @@
 import httpx
 from string import Template
-
 from pydantic import EmailStr
 
 from app.schemas import EmailSchema

@@ -1,13 +1,10 @@
 from typing import Optional, Union
 
-import httpx
-from pydantic import EmailStr
 from beanie import PydanticObjectId
 from fastapi import Depends, Request
 from fastapi_users import BaseUserManager, FastAPIUsers, InvalidPasswordException
 from fastapi_users.authentication import (
     AuthenticationBackend,
-    # BearerTransport,
     CookieTransport,
     JWTStrategy,
 )
@@ -16,23 +13,11 @@ from fastapi_users.db import BeanieUserDatabase, ObjectIDIDMixin
 from app.db import User, get_user_db
 from app.schemas import UserCreate
 from app.utils.config import CONFIG
+
 from app.utils.email import send_verification_email
 
 
 SECRET = CONFIG.jwt_secret
-# TOKEN_REQUEST_URL = CONFIG.api_token_request_url
-
-
-# async def request_verification_token(user_email: EmailStr):
-#     try:
-#         async with httpx.AsyncClient() as client:
-#             response = await client.post(TOKEN_REQUEST_URL, json={"email": user_email})
-#             if response.status_code == 202:
-#                 print("Sent verification token to user's email.")
-#             else:
-#                 raise Exception
-#     except Exception as e:
-#         print(f"Error:\n{e}")
 
 
 class UserManager(ObjectIDIDMixin, BaseUserManager[User, PydanticObjectId]):
@@ -51,9 +36,8 @@ class UserManager(ObjectIDIDMixin, BaseUserManager[User, PydanticObjectId]):
         if user.email in password:
             raise InvalidPasswordException(reason="Password should not contain email")
 
-    async def on_after_register(self, user: User, request: Optional[Request] = None):
+    async def on_after_register(self, user: User):
         print(f"User {user.id} has registered.")
-        # await request_verification_token(user.email)
 
     async def on_after_forgot_password(
         self, user: User, token: str, request: Optional[Request] = None
@@ -63,9 +47,8 @@ class UserManager(ObjectIDIDMixin, BaseUserManager[User, PydanticObjectId]):
     async def on_after_request_verify(
         self, user: User, token: str, request: Optional[Request] = None
     ):
-        async def send_verification_email(token, email_user):
-            await print("Emulating email send!")
-
+        # async def send_verification_email(token, email_user):
+        #     await print("Emulating email send!")
         print(f"Verification requested for user: {user.id}.")
         try:
             res = await send_verification_email(token, user.email)
@@ -82,7 +65,6 @@ async def get_user_manager(user_db: BeanieUserDatabase = Depends(get_user_db)):
     yield UserManager(user_db)
 
 
-# bearer_transport = BearerTransport(tokenUrl="auth/login")
 bearer_transport = CookieTransport(cookie_name="token", cookie_max_age=3600)
 
 

@@ -9,14 +9,14 @@ from app.users import current_active_user
 
 app = FastAPI()
 
-origins = ["http://localhost:3000", "http://127.0.0.1:8081"]
+origins = ["http://localhost:3000"]
 
 app.add_middleware(
     CORSMiddleware,
     allow_origins=origins,
     allow_credentials=True,
     allow_methods=["*"],
-    allow_headers=["Origin", "Content-Type", "Accept"],
+    allow_headers=["Content-Type"],
 )
 
 app.include_router(auth.router)
